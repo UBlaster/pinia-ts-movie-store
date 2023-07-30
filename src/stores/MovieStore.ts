@@ -1,28 +1,86 @@
 import {defineStore} from 'pinia';
+import { ref, computed } from 'vue';
+
+interface Movie {
+    id: number;
+    original_title: string;
+    overview: string;
+    poster_path: string;
+    release_date: string;
+    isWatched: boolean;
+}
 
 
-export const useMovieStore = defineStore('MovieStore', {
-    state: ()=> ({
-        movies: [
-            {
-                id: 1,
-                original_title: "Spider-Man",
-                overview:
-                    "After being bitten by a genetically altered spider at Oscorp, nerdy but endearing high school student Peter Parker is endowed with amazing powers to become the superhero known as Spider-Man.",
-                poster_path: "/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg",
-                release_date: "2002-05-01",
-                isWatched: false,
-                },
-                {
-                id: 2,
-                original_title: "The Batman",
-                overview:
-                    "In his second year of fighting crime, Batman uncovers corruption in Gotham City that connects to his own family while facing a serial killer known as the Riddler.",
-                poster_path: "/b0PlSFdDwbyK0cf5RxwDpaOJQvQ.jpg",
-                release_date: "2022-03-01",
-                isWatched: true,
-                },
-            ],
-            activeTab: 1,
-    })
+// export const useMovieStore = defineStore('MovieStore', {
+//     state: ()=> ({
+//         movies: [] as Movie[],
+//             activeTab: 2,
+//     }),
+//     getters: {
+//         watchedMovies(): Movie[] {
+//             return this.movies.filter(el => el.isWatched);      
+//         },
+//         totalCountMovies(): number {
+//             return this.movies.length;
+//         },
+//         countFiltredMovies(): number {
+//             return this.movies.filter(el => el.isWatched).length
+//         }
+//     },
+//     actions: {
+//         setActiveTab(id: number) {
+//             this.activeTab = id;
+//         },
+//         toggleWatched(id: number) {
+//             const idx = this.movies.findIndex(el => el.id === id);
+//             this.movies[idx].isWatched = !this.movies[idx].isWatched;
+//         },
+//         deleteMovie(id: number) {
+//             this.movies = this.movies.filter(el => el.id !== id)
+//         }
+//     }
+// });
+
+export const useMovieStore = defineStore('MovieStore', () => {
+    const movies = ref([] as Movie[]) 
+    const activeTab = ref(2);
+
+    const watchedMovies = computed(() => {
+        return movies.value.filter(el => el.isWatched);
+    });
+
+    const totalCountMovies = computed(() => {
+        return movies.value.length;
+    });
+
+    const countFiltredMovies = computed(() => {
+        return movies.value.filter(el => el.isWatched).length
+    });
+
+    const setActiveTab = (id: number) => {
+        activeTab.value = id;
+    };
+
+    const toggleWatched = (id: number) => {
+        const idx = movies.value.findIndex(el => el.id === id);
+        movies.value[idx].isWatched = !movies.value[idx].isWatched;
+    };
+
+    const deleteMovie = (id: number) => {
+        movies.value = movies.value.filter(el => el.id !== id)
+    };
+
+
+
+
+    return {
+        movies,
+        activeTab,
+        setActiveTab,
+        toggleWatched,
+        deleteMovie,
+        watchedMovies,
+        totalCountMovies,
+        countFiltredMovies
+    }
 });
